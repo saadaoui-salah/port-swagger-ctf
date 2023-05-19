@@ -143,3 +143,7 @@ now we need to get all content of the database notice that we will use **informa
    pg_delay(10)
 
 here the server waits for 10 seconds before sending a response
+
+# LAB 13 -- Blind SQL injection with time delays and information retrieval
+
+do the same steps in lab 11 and instead of causing errors add pg_delay(10)
